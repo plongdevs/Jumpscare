@@ -1,13 +1,302 @@
-<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>L-Tool</title><meta name="viewport"content="width=device-width,initial-scale=1"><link rel="icon"href="2.ico"><style>*{box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}body,html{margin:0;padding:0;height:100%;background:#f6f8fa;overflow:hidden}#extra-video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;display:none;z-index:0}.popup-overlay{position:fixed;inset:0;background:#f6f8fa;display:flex;align-items:center;justify-content:center;z-index:1000}.popup{background:#fff;width:100%;max-width:420px;padding:32px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,.08);text-align:center}.popup h3{margin:0 0 12px;font-size:22px;font-weight:600;color:#1f2328}.popup p{font-size:14px;color:#57606a;line-height:1.6;margin-bottom:20px}.btn-group{display:flex;gap:12px}button{flex:1;padding:10px 0;border-radius:8px;border:none;font-size:14px;font-weight:500;cursor:pointer}.btn-accept{background:#0969da;color:#fff}.btn-accept:hover{background:#075bd7}.btn-reject{background:#fff;color:#24292f;border:1px solid #d0d7de}.btn-reject:hover{background:#f3f4f6}.footer-text{font-size:12px;color:#6e7781;margin-top:18px}</style></head><body><video id="extra-video"autoplay muted loop playsinline><source src="video1.mp4"type="video/mp4"></video><audio id="backgroundMusic"loop><source src="nhac1.mp3"type="audio/mpeg"></audio><div class="popup-overlay"id="popupOverlay"><div class="popup"><h3>Điều khoản sử dụng</h3><p><strong style="font-size:18px;color:#007bff">L-Tool</strong> là bộ công cụ hỗ trợ phân tích, nghiên cứu bảo mật ứng dụng và thao tác trên mã nguồn.<br><br>Với <strong style="color:#e63946;font-size:17px">42 công cụ</strong> mạnh mẽ như Dex Decrypt, Decompile, Hook, giải mã thư viện, cùng các tính năng bảo vệ mã nguồn như Dex2C, Dex3C, Resource Obfuscate, Dex Obfuscate, giúp bạn có thể phân tích hoặc bảo vệ hầu hết ứng dụng, APK.<br><br>Khi tiếp tục sử dụng <strong style="color:#007bff">L-Tool</strong>, bạn xác nhận rằng bạn tự chịu hoàn toàn trách nhiệm đối với mọi hành vi và kết quả phát sinh từ việc sử dụng công cụ.</p><div style="background:#f1f5f9;padding:10px 14px;border-radius:8px;margin-bottom:18px;font-size:15px;color:#1f2937;font-weight:500">Số người đã tin tưởng và sử dụng L-Tool: <span id="trusted-count"style="color:#007bff;font-weight:600">0</span></div><div class="btn-group"><button class="btn-reject"onclick="rejectTerms()">Không Chấp Nhận</button> <button class="btn-accept"onclick="acceptTerms()">Chấp Nhận</button></div><p class="footer-text">Trang web này thuộc quyền sở hữu của PLongDev<br>© DMCA Protection</p></div></div><script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script><script>/* ===========================
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   FIREBASE CONFIG — FIXED
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ============================ */
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           const firebaseConfig = {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   apiKey: "AIzaSyDlBi9l2HpyC5AV5PTEFcYsCzMImMK_69I",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           authDomain: "plongtrollcounter-85257.firebaseapp.com",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   databaseURL: "https://plongtrollcounter-85257-default-rtdb.firebaseio.com",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           projectId: "plongtrollcounter-85257",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   storageBucket: "plongtrollcounter-85257.firebasestorage.app",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           messagingSenderId: "888868408248",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   appId: "1:888868408248:web:f81298e0e7826016ec1d4d",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           measurementId: "G-2PM9820118"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>L-Tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="2.ico">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #f6f8fa;
+            overflow: hidden;
+        }
+
+        /* VIDEO */
+        #extra-video {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            z-index: 0;
+        }
+
+        /* POPUP OVERLAY */
+        .popup-overlay {
+            position: fixed;
+            inset: 0;
+            background: #f6f8fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        /* POPUP CARD */
+        .popup {
+            background: #fff;
+            width: 100%;
+            max-width: 420px;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,.08);
+            text-align: center;
+        }
+
+        .popup h3 {
+            margin: 0 0 12px;
+            font-size: 22px;
+            font-weight: 600;
+            color: #1f2328;
+        }
+
+        .popup p {
+            font-size: 14px;
+            color: #57606a;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-accept {
+            background: #0969da;
+            color: white;
+        }
+
+        .btn-accept:hover {
+            background: #075bd7;
+        }
+
+        .btn-reject {
+            background: white;
+            color: #24292f;
+            border: 1px solid #d0d7de;
+        }
+
+        .btn-reject:hover {
+            background: #f3f4f6;
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: #6e7781;
+            margin-top: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- VIDEO -->
+    <video id="extra-video" autoplay muted loop playsinline>
+        <source src="video1.mp4" type="video/mp4">
+    </video>
+
+    <!-- MUSIC -->
+    <audio id="backgroundMusic" loop>
+        <source src="nhac1.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- POPUP -->
+<div class="popup-overlay" id="popupOverlay">
+    <div class="popup">
+        <h3>Điều khoản sử dụng</h3>
+
+        <p>
+            <strong style="font-size: 18px; color: #007bff;">L-Tool</strong> là bộ công cụ hỗ trợ phân tích, nghiên cứu bảo mật ứng dụng và thao tác trên mã nguồn.<br><br>
+
+            Với
+            <strong style="color: #e63946; font-size: 17px;">42 công cụ</strong>
+            mạnh mẽ như Dex Decrypt, Decompile, Hook, giải mã thư viện, cùng các tính năng bảo vệ mã nguồn như Dex2C, Dex3C, Resource Obfuscate, Dex Obfuscate, giúp bạn có thể phân tích hoặc bảo vệ hầu hết ứng dụng, APK.<br><br>
+
+            Khi tiếp tục sử dụng 
+            <strong style="color: #007bff;">L-Tool</strong>, bạn xác nhận rằng bạn tự chịu hoàn toàn trách nhiệm đối với mọi hành vi và kết quả phát sinh từ việc sử dụng công cụ.
+        </p>
+
+            <!-- COUNTER -->
+            <div style="
+                background:#f1f5f9;
+                padding:10px 14px;
+                border-radius:8px;
+                margin-bottom:18px;
+                font-size:15px;
+                color:#1f2937;
+                font-weight:500;">
+                
+                Số người đã tin tưởng và sử dụng L-Tool: 
+                <span id="trusted-count" style="color:#007bff; font-weight:600;">0</span>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-reject" onclick="rejectTerms()">Không Chấp Nhận</button>
+                <button class="btn-accept" onclick="acceptTerms()">Chấp Nhận</button>
+            </div>
+
+            <p class="footer-text">
+                Trang web này thuộc quyền sở hữu của PLongDev<br>
+                © DMCA Protection
+            </p>
+        </div>
+    </div>
+
+    <!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+<script>
+    /* ===========================
+       FIREBASE CONFIG — FIXED
+    ============================ */
+    const firebaseConfig = {
+        apiKey: "AIzaSyDlBi9l2HpyC5AV5PTEFcYsCzMImMK_69I",
+        authDomain: "plongtrollcounter-85257.firebaseapp.com",
+        databaseURL: "https://plongtrollcounter-85257-default-rtdb.firebaseio.com",
+        projectId: "plongtrollcounter-85257",
+        storageBucket: "plongtrollcounter-85257.firebasestorage.app",
+        messagingSenderId: "888868408248",
+        appId: "1:888868408248:web:f81298e0e7826016ec1d4d",
+        measurementId: "G-2PM9820118"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const ref = db.ref("ltool_trusted_count");
+
+    /* ===========================
+       HIỆU ỨNG QUAY SỐ
+    ============================ */
+    function animateCounter(target) {
+        let current = 0;
+        const el = document.getElementById("trusted-count");
+        const speed = Math.max(1, Math.floor(target / 40));
+
+        const interval = setInterval(() => {
+            current += speed;
+            if (current >= target) {
+                current = target;
+                clearInterval(interval);
+            }
+            el.textContent = current.toLocaleString("vi-VN");
+        }, 20);
+    }
+
+    /* ===========================
+       SET DEFAULT 50000 NẾU CHƯA TỒN TẠI
+    ============================ */
+    ref.once("value").then(snapshot => {
+        if (!snapshot.exists()) {
+            ref.set(53237);
+            animateCounter(53237);
+        }
+    });
+
+    /* ===========================
+       TĂNG MỖI KHI CÓ NGƯỜI VÀO WEB
+    ============================ */
+    ref.transaction(count => {
+        if (count === null) return 53237 + 1;  
+        return count + 1;
+    }).then(result => {
+        animateCounter(result.snapshot.val());
+    });
+
+    /* ===========================
+       ACCEPT / REJECT TERMS
+    ============================ */
+    function acceptTerms() {
+        document.getElementById("popupOverlay").style.display = "none";
+
+        const music = document.getElementById("backgroundMusic");
+        const extraVideo = document.getElementById("extra-video");
+
+        extraVideo.style.display = "block";
+        extraVideo.play();
+        music.play();
+
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        }
+    }
+
+    function rejectTerms() {
+        window.location.href = "https://www.google.com";
+    }
+</script>
+        /* ===========================
+           HIỆU ỨNG QUAY SỐ
+        ============================ */
+        function animateCounter(target) {
+            let current = 0;
+            const el = document.getElementById("trusted-count");
+            const speed = Math.max(1, Math.floor(target / 40));
+
+            const interval = setInterval(() => {
+                current += speed;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(interval);
+                }
+                el.textContent = current;
+            }, 20);
+        }
+
+        /* ===========================
+           TĂNG MỖI KHI VÀO WEB
+        ============================ */
+        ref.transaction(count => (count || 0) + 1)
+            .then(result => animateCounter(result.snapshot.val()))
+            .catch(() => {
+                ref.once("value").then(snap => {
+                    animateCounter(snap.val() || 0);
+                });
+            });
+
+        /* ===========================
+           ACCEPT / REJECT TERMS
+        ============================ */
+        function acceptTerms() {
+            document.getElementById("popupOverlay").style.display = "none";
+
+            const music = document.getElementById("backgroundMusic");
+            const extraVideo = document.getElementById("extra-video");
+
+            extraVideo.style.display = "block";
+            extraVideo.play();
+            music.play();
+
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            }
+        }
+
+        function rejectTerms() {
+            window.location.href = "https://www.google.com";
+        }
+    </script>
+
+</body>
+</html>
