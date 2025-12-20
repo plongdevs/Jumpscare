@@ -174,22 +174,19 @@
             box-shadow: 0 20px 50px rgba(79, 70, 229, .7), 0 0 15px rgba(255,255,255,0.2);
         }
 
-        /* FOOTER */
-        footer {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
-            text-align:center;
-            padding:20px 0;
-            background: rgba(255, 255, 255, 0.06);
-            border-top:1px solid rgba(255, 255, 255, 0.12);
-            color:#94a3b8;
-            font-size:14px;
-        }
-
-        footer.show {
-            opacity: 1;
-            transform: translateY(0);
+footer {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all .8s ease;
+  text-align: center;
+  padding: 20px 0;
+  background: rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  color: #94a3b8;
+  font-size: 14px;
+  position: relative; /* nếu muốn luôn cuối trang, dùng relative */
+  width: 100%;
+}
         }
     </style>
 </head>
@@ -213,7 +210,7 @@
             <span>Security • Undetected • Safe</span>
             <p>L-Tool là một công cụ dùng để buff tương tác, tăng tim, follow và lượt xem cho tài khoản của bạn với công nghệ Nreer tiên tiến sẽ giúp bạn tăng tương tác cho tài khoản của bạn và đặc biệt là HOÀN TOÀN MIỄN PHÍ
             </p>
-            <p>© Developer PLongDev. All rights reserved</p>
+            <p>Developed by PLongDev</p>
         </section>
 
         <section class="section">
@@ -289,34 +286,39 @@
         sections.forEach(s => observer.observe(s));
 
         // ================= COUNT-UP STATS =================
-        function runCounters() {
-            document.querySelectorAll(".stat-number[data-target]").forEach(el => {
-                if (el.dataset.done) return;
-                el.dataset.done = true;
-                const target = parseFloat(el.dataset.target);
-                const suffix = el.dataset.suffix || "";
-                let current = 0;
-                const step = target / 80;
-                const timer = setInterval(() => {
-                    current += step;
-                    if (current >= target) { current = target; clearInterval(timer); }
-                    el.textContent = (target % 1 !== 0 ? current.toFixed(1) : Math.floor(current)) + suffix;
-                }, 25);
-            });
-        }
+function runCounters(){
+  const counters = document.querySelectorAll(".stat-number[data-target]");
+  counters.forEach((el, index) => {
+    setTimeout(() => { // delay theo index
+      if(el.dataset.done) return;
+      el.dataset.done = true;
+      const target = parseFloat(el.dataset.target);
+      const suffix = el.dataset.suffix || "";
+      let current = 0;
+      const step = target / 80;
+      const timer = setInterval(() => {
+        current += step;
+        if(current >= target){current = target; clearInterval(timer)}
+        el.textContent = (target%1!==0 ? current.toFixed(1) : Math.floor(current)) + suffix;
+      }, 25)
+    }, index * 300) // delay 0ms, 300ms, 600ms, 900ms...
+  })
+}
 
         // ================= START TOOL =================
-        function startTool() {
-            const landing = document.getElementById("landing");
-            const video = document.getElementById("extra-video");
-            const music = document.getElementById("backgroundMusic");
-            landing.remove();
-            video.style.display = "block";
-            video.play().catch(() => {});
-            music.play().catch(() => {});
-            document.documentElement.requestFullscreen?.().catch(() => {});
-        }
+function startTool() {
+  const landing = document.getElementById("landing");
+  const video = document.getElementById("extra-video");
+  const music = document.getElementById("backgroundMusic");
 
+  landing.remove();
+  video.style.display = "block";
+  video.muted = true;  // tắt tiếng video
+  video.play();
+  music.play();
+  
+  document.documentElement.requestFullscreen?.().catch(()=>{});
+}
         // ================= FIREBASE =================
         const firebaseConfig = {
             apiKey: "AIzaSyDlBi9l2HpyC5AV5PTEFcYsCzMImMK_69I",
@@ -392,13 +394,18 @@
 
         // ================= FOOTER =================
         const footer = document.querySelector('footer');
-        window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY;
-            const vh = window.innerHeight;
-            if (scrollY + vh > document.body.scrollHeight - 50) {
-                footer.classList.add('show');
-            }
-        });
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY;
+  const vh = window.innerHeight;
+  const bodyHeight = document.body.offsetHeight;
+  
+  // Khi scroll xuống dưới 100px từ cuối trang
+  if (scrollY + vh >= bodyHeight - 100) {
+    footer.classList.add('show');
+  } else {
+    footer.classList.remove('show');
+  }
+});
     </script>
 </body>
 
